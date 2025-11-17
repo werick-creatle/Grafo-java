@@ -7,38 +7,43 @@ public class AppGrafo {
 
     public static void main(String[] args) {
 
-        // Aqui eu monto o grafo inteiro antes de começar qualquer cálculo
+        // Aqui eu crio o grafo que vai representar o mapa do Taquaral
         Grafo<String> grafo = new Grafo<>();
+
+        // Já preencho ele com todos os pontos e distâncias
         popularGrafo(grafo);
 
-        // Leitura básica pra pegar ponto inicial e final
+        // Leio do teclado o ponto de partida e o de chegada
         Scanner scanner = new Scanner(System.in);
         System.out.println("--- Calculadora de Rota - Jardim Taquaral ---");
+
         System.out.print("Digite o ponto de PARTIDA (Ex.: A): ");
         String partida = scanner.nextLine().toUpperCase();
+
         System.out.print("Digite o ponto de CHEGADA (Ex.: P): ");
         String chegada = scanner.nextLine().toUpperCase();
 
-        // Verifico se os pontos existem no grafo antes de rodar Dijkstra
+        // Se o usuário digitar letra que não existe no grafo, já paro tudo
         if (grafo.getVertice(partida) == null || grafo.getVertice(chegada) == null) {
             System.err.println("Erro: Ponto de partida ou chegada inválido.");
             scanner.close();
             return;
         }
 
-        // Aqui eu rodo meu buscador, que procura 1 ou 2 caminhos possíveis
+        // Uso o buscador pra rodar o Dijkstra e tentar achar até dois trajetos
         BuscadorDeCaminhos<String> buscador = new BuscadorDeCaminhos<>();
         List<ResultadoCaminho<String>> caminhos = buscador.encontrarCaminhos(grafo, partida, chegada);
 
-        // Exibe o resultado pro usuário
+        // Se nem o menor caminho existir, aviso o usuário
         if (caminhos.isEmpty()) {
             System.out.println("\nNão foi possível encontrar um caminho de " + partida + " para " + chegada + ".");
         } else {
             System.out.println("\n--- Opções de Trajeto ---");
 
-            // já estava no formato antigo, então deixei igual :)
+            // Aqui eu mostro cada caminho encontrado
             for (int i = 0; i < caminhos.size(); i++) {
                 ResultadoCaminho<String> resultado = caminhos.get(i);
+
                 System.out.println("\nOpção " + (i + 1) + " (Menor Caminho)");
                 System.out.println("Trajeto: " + String.join(" -> ", resultado.getCaminho()));
                 System.out.println("Distância Total: " + resultado.getDistancia() + " metros.");
@@ -48,24 +53,21 @@ public class AppGrafo {
         scanner.close();
     }
 
-    // Aqui eu crio todos os pontos e conecto exatamente como no mapa
+    // Aqui eu insiro todos os pontos do parque e todas as distâncias possíveis.
+    // Basicamente construo o grafo inteiro pronto pra rodar o Dijkstra.
     private static void popularGrafo(Grafo<String> grafo) {
 
-        // Primeiro adiciono todos os vértices
+        // Primeiro adiciono todos os vértices (as letras que representam os pontos)
         String[] vertices = {
-                "A", "B", "C", "D", "E", "F", "G", "H",
-                "I", "J", "K", "L", "M", "N", "O", "P",
-                "Q", "R", "S", "T", "U", "V", "X"
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+                "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X"
         };
 
-        // versão antiga do for
-        for (int i = 0; i < vertices.length; i++) {
-            String v = vertices[i];
+        for (String v : vertices) {
             grafo.adicionaVertice(v);
         }
 
-        // Agora conecto tudo — cada ligação adiciono nos dois sentidos,
-        // já que meu grafo é basicamente um mapa real.
+        // Depois adiciono as ligações (arestas) entre os pontos, sempre em mão dupla
         adicionarArestaDupla(grafo, 300, "A", "B");
         adicionarArestaDupla(grafo, 370, "A", "S");
         adicionarArestaDupla(grafo, 317, "A", "X");
@@ -80,10 +82,7 @@ public class AppGrafo {
         adicionarArestaDupla(grafo, 512, "J", "K");
         adicionarArestaDupla(grafo, 135, "K", "L");
         adicionarArestaDupla(grafo, 167, "L", "N");
-
-        // L ↔ M corrigido pra 50 metros
-        adicionarArestaDupla(grafo, 50, "L", "M");
-
+        adicionarArestaDupla(grafo, 50, "L", "M"); // L ↔ M (essa foi sua correção original)
         adicionarArestaDupla(grafo, 108, "N", "O");
         adicionarArestaDupla(grafo, 82, "O", "P");
         adicionarArestaDupla(grafo, 215, "P", "Q");
@@ -97,7 +96,7 @@ public class AppGrafo {
         adicionarArestaDupla(grafo, 107, "U", "X");
     }
 
-    // Função pra facilitar a vida: adiciona aresta pros dois lados
+    // Essa função cria ligação nos dois sentidos — porque o grafo é não direcionado.
     private static void adicionarArestaDupla(Grafo<String> g, int peso, String origem, String destino) {
         g.adicionaAresta(peso, origem, destino);
         g.adicionaAresta(peso, destino, origem);

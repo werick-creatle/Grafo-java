@@ -1,30 +1,30 @@
 package org.example;
 
 public class Aresta<T> {
-    //Aqui eu guardo o peso dessa aresta
+
+    // Aqui eu guardo o peso dessa ligação (quantos metros, custo, etc.)
     private int peso;
 
-    //Aqui eu guardo pra qual vértice essa aresta está apontando
+    // Aqui eu guardo pra qual vértice essa aresta está apontando
     private Vertice<T> destino;
 
-    //Construtor da aresta
-    //Quando eu crio uma aresta, eu digo qual o peso dela e pra qual vértice ela vai
+    // Quando crio uma aresta, eu já digo qual é o peso e qual vértice ela alcança
     public Aresta(int peso, Vertice<T> destino) {
         this.peso = peso;
         this.destino = destino;
     }
 
-    //Retorno o peso dessa aresta
+    // Retorno o peso da aresta quando precisar calcular caminho
     public int getPeso() {
         return peso;
     }
 
-    //Retorno o vértice de destino dessa aresta
+    // Retorno o vértice de destino (pra saber pra onde essa ligação vai)
     public Vertice<T> getDestino() {
         return destino;
     }
 
-    //Aqui só deixo a aresta mais fácil de visualizar quando imprimir
+    // Deixo a impressão da aresta mais legível no console
     @Override
     public String toString() {
         return "Aresta{" +
